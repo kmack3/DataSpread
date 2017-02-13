@@ -80,6 +80,41 @@ Given that the nodes of our dependency graph represent cells or regions within a
     \item \textbf{Overlap:} We have the options to allow regions to overlap or not overlap. In this case, overlap entails a single cell belonging to more than one region. Again, the benefit of allowing overlaps is more freedom when compressing while keeping the number of false positives low. However, it can cause an increase in time to access data in the graph, as we must determine which regions a cell belongs to before we can return the regions that depend on that cell. These negative performance effects may be able to be mitigated by using an R-tree that behaves by outputting the regions a cell belongs to when given a cell.
 \end{enumerate}
 
+\section{NP-Hardness}
+
+Why this problem is NP hard so our greedy solution is acceptable... @Vipul
+
+\section{Greedy Solution}
+
+What Mangesh' code does.
+
+\section{Spreadsheet Applications}
+
+We compressed the dependency graphs from real spreadsheets via the greedy algorithm described above. The following are the results where we restrict the size of the dependency graph to be 30.
+
+Graph 1
+
+\includegraphics[width=\textwidth]{sizevtime.png}
+
+This graph compares the time it took to compress the graph and the original size of the graph. Clearly, the larger the graph, the more it needs to be compressed, and the longer the compression takes. **can we see a trend here?**
+
+Graph 2
+
+\includegraphics[width=\textwidth]{fprvamountcomp.png}
+
+This graph compares the amount the graph was compressed with the ensuing false positive rate.
+
+Graph 3
+
+\includegraphics[width=\textwidth]{amountcomp.png}
+
+This is a histogram of the amount the size of the graph decreased due to the compression. As shown, many spreadsheets do not require much compression if any at all. However, there is still a significant number of spreadsheets who were significantly compressed. If we have a memory constraint close to 30, this indicates that many graphs would not be able to fit in main memory and would require many disk accesses.
+
+** TODO: get data about how long it takes to update the compressed graphs, comparing this with false positive rates **
+** TODO: change fpr to number of false positives **
+
+
+
 %This was back when we said we allowed no overlap and only rectangular regions:
 %There are certain restrictions in how we can chose to combine nodes to compress the graph. Each node represents a cell in the spreadsheet or a rectangular region of cells. In either case, merging two nodes will be stored as a rectangular region for ease of representation. Non-rectangular regions are not allowed. To encode a region we simply record the upper-leftmost and lower-rightmost cells. For example, if we were to combine nodes A1 and B2 in the dependency graph, we would remove nodes A1 and B2 from the graph. We would also remove nodes A2 and B1 if they existed to eliminate redundancy of data in the graph. Eliminating this redundancy is necessary because otherwise it would be hard to extract information about which cells a certain cell B2 is precedent to if B2 were represented by multiple different regions in the graph (perhaps one node in the graph is B2, one node is A1:D6, and another is B1:E7). After removing the individual nodes, we add a node A1:B2 which represents the region containing cells A1, A2, B1, and B2. Finally, we add any edges into the graph that had A1, A2, B1, or B2 as an endpoint, except now A1:B2 is the new endpoint. Additionally, all resulting rectangular regions should be disjoint.
 
